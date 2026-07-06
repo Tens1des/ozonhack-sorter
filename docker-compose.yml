@@ -1,0 +1,5 @@
+services:
+  sorter-simulation:
+    build: .
+    volumes:
+      - ./simulation/results:/app/simulation/results

@@ -1,0 +1,31 @@
+{
+  "performance": {
+    "target_items_per_hour": 100000,
+    "target_items_per_second": 27.78,
+    "modules": 4,
+    "per_module_items_per_hour": 25000.0,
+    "per_module_items_per_second": 6.94,
+    "induction_lanes_per_module": 4,
+    "induction_capacity_per_module_pps": 33.33,
+    "total_induction_capacity_pps": 133.33,
+    "design_margin": 4.8
+  },
+  "area": {
+    "modules": 4,
+    "module_loop_length_m": 145.7,
+    "module_loop_width_m": 26.0,
+    "module_area_m2": 1734.2,
+    "total_sorter_area_m2": 6936.8,
+    "aux_area_m2": 2800.0,
+    "total_area_m2": 9736.8,
+    "limit_m2": 20000,
+    "area_utilization": 0.487
+  },
+  "energy": {
+    "sorter_power_kw": 340.0,
+    "aux_power_kw": 120.0,
+    "total_power_kw": 460.0,
+    "energy_per_item_wh": 4.6,
+    "energy_per_100k_items_kwh": 460.0
+  }
+}

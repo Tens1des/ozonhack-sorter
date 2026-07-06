@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+"""Схема станции КТЯ."""
+
+from pathlib import Path
+
+OUT = Path(__file__).resolve().parent.parent / "cad" / "kty_station.svg"
+
+SVG = """<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="260" viewBox="0 0 480 260">
+  <rect width="480" height="260" fill="#FAFAFA"/>
+  <text x="240" y="22" text-anchor="middle" font-size="14" font-family="sans-serif">Станция КТЯ — узел ячейки сброса</text>
+  <rect x="40" y="50" width="120" height="60" fill="#E8F0FE" stroke="#005BFF"/>
+  <text x="100" y="85" text-anchor="middle" font-size="11">Лоток сброса</text>
+  <rect x="200" y="70" width="80" height="50" fill="#E6F7EE" stroke="#00A86B"/>
+  <text x="240" y="100" text-anchor="middle" font-size="11">КТЯ</text>
+  <rect x="320" y="40" width="100" height="80" fill="#FFF8E6" stroke="#F5A623"/>
+  <text x="370" y="75" text-anchor="middle" font-size="10">Магазин</text>
+  <text x="370" y="90" text-anchor="middle" font-size="10">пустых КТЯ</text>
+  <path d="M160 80 L200 95" stroke="#666" marker-end="url(#a)"/>
+  <path d="M280 95 L320 80" stroke="#666" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#666"/></marker></defs>
+  <text x="100" y="150" text-anchor="middle" font-size="10">Датчик уровня</text>
+  <text x="240" y="150" text-anchor="middle" font-size="10">Уплотнение 0,4с</text>
+  <text x="370" y="150" text-anchor="middle" font-size="10">Смена 14с</text>
+  <rect x="60" y="170" width="360" height="60" rx="6" fill="#F5F5F5" stroke="#CCC"/>
+  <text x="240" y="195" text-anchor="middle" font-size="11">Цикл: накопление → 88% → уплотнение → 100% → автосмена</text>
+  <text x="240" y="215" text-anchor="middle" font-size="10" fill="#666">Параллельно для 400 ячеек</text>
+</svg>"""
+
+if __name__ == "__main__":
+  OUT.parent.mkdir(parents=True, exist_ok=True)
+  OUT.write_text(SVG, encoding="utf-8")
+  print(f"Saved: {OUT}")

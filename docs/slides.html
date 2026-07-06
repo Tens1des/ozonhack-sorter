@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>OzonHack — Презентация</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #111; color: #eee; }
+    .slide { min-height: 100vh; padding: 60px 80px; display: none; flex-direction: column; justify-content: center; }
+    .slide.active { display: flex; }
+    h1 { font-size: 2.4rem; color: #4d9fff; margin-bottom: 24px; }
+    h2 { font-size: 1.6rem; color: #8ab4ff; margin-bottom: 16px; }
+    ul { margin-left: 24px; line-height: 1.8; font-size: 1.2rem; }
+    .metric { display: inline-block; background: #1a2a44; padding: 12px 20px; border-radius: 8px; margin: 8px 12px 8px 0; }
+    .nav { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; }
+    button { background: #005BFF; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #0047cc; }
+    .counter { position: fixed; bottom: 24px; left: 24px; color: #666; font-size: 14px; }
+    table { border-collapse: collapse; margin-top: 16px; font-size: 1rem; }
+    td, th { border: 1px solid #333; padding: 10px 16px; text-align: left; }
+    th { background: #1a2a44; }
+  </style>
+</head>
+<body>
+
+<div class="slide active">
+  <h1>OzonHack — Трек 2</h1>
+  <h2>Модульный кросс-белт сортировщик</h2>
+  <ul>
+    <li>100 000 товаров/час</li>
+    <li>400 направлений</li>
+    <li>Размещение в КТЯ</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>Проблема</h1>
+  <ul>
+    <li>Сортировка — только часть системы</li>
+    <li>КТЯ: заполнение, уплотнение, смена</li>
+    <li>Заторы каскадно бьют по всей линии</li>
+    <li>Нужна целостная инженерная система</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>Решение</h1>
+  <ul>
+    <li>4 кросс-белт модуля × 100 ячеек</li>
+    <li>Сканер → WMS → индукция → сброс → КТЯ</li>
+    <li>Антизатор при перегрузке ячеек</li>
+    <li>Автосмена КТЯ за 14 секунд</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>Ключевые показатели</h1>
+  <div class="metric">99 792 т/ч</div>
+  <div class="metric">9 737 м²</div>
+  <div class="metric">460 кВт</div>
+  <div class="metric">99,45% точность</div>
+</div>
+
+<div class="slide">
+  <h1>Симуляция — 5 сценариев</h1>
+  <table>
+    <tr><th>Сценарий</th><th>Пропускная</th><th>Точность</th></tr>
+    <tr><td>baseline</td><td>99,8%</td><td>99,45%</td></tr>
+    <tr><td>overload 125%</td><td>125,8%</td><td>99,05%</td></tr>
+    <tr><td>отказ ячеек</td><td>99,7%</td><td>98,48%</td></tr>
+    <tr><td>деградация модуля</td><td>100,6%</td><td>99,53%</td></tr>
+    <tr><td>hotspot</td><td>100,1%</td><td>96,52%</td></tr>
+  </table>
+</div>
+
+<div class="slide">
+  <h1>Масштабируемость</h1>
+  <ul>
+    <li>+100 направлений = +1 модуль</li>
+    <li>+поток = +линии индукции</li>
+    <li>Отказ модуля → остальные работают</li>
+    <li>Площадь: 49% от лимита 20 000 м²</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>Инструменты</h1>
+  <ul>
+    <li>Python + SimPy — симуляция</li>
+    <li>Docker — воспроизводимость</li>
+    <li>FreeCAD/STL — 3D компоновка</li>
+    <li>HTTP WMS-mock — интеграция</li>
+  </ul>
+</div>
+
+<div class="slide">
+  <h1>Спасибо</h1>
+  <ul>
+    <li>Репозиторий: README.md</li>
+    <li>Запуск: ./scripts/run_all.sh</li>
+    <li>Вопросы?</li>
+  </ul>
+</div>
+
+<div class="counter"><span id="num">1</span> / 8</div>
+<div class="nav">
+  <button onclick="prev()">←</button>
+  <button onclick="next()">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let i = 0;
+  function show() {
+    slides.forEach((s, j) => s.classList.toggle('active', j === i));
+    document.getElementById('num').textContent = i + 1;
+  }
+  function next() { i = Math.min(i + 1, slides.length - 1); show(); }
+  function prev() { i = Math.max(i - 1, 0); show(); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+</script>
+</body>
+</html>

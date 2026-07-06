@@ -1,0 +1,6 @@
+scenario,duration_s,generated,processed,throughput_per_hour,target_per_hour,throughput_ratio,correct_rate,misroute_rate,lost_rate,damage_rate,rejected_rate,avg_cycle_s,p95_cycle_s,kty_swaps,kty_full_events,jam_events
+baseline,600,16634,16632,99792.0,100000,0.998,0.9945,0.0054,0.0,0.001082,0.0,11.37,16.32,58,60,53
+overload_125pct,600,20976,20972,125832.0,100000,1.258,0.9905,0.0093,0.0,0.000763,0.0,11.36,16.22,115,124,147
+chute_failure,600,16625,16623,99738.0,100000,0.997,0.9848,0.015,0.0,0.000722,0.0,11.38,16.33,56,59,68
+module_degraded,600,16769,16769,100614.0,100000,1.006,0.9953,0.0047,0.0,0.000596,0.0,12.35,18.94,58,61,71
+hotspot_jam,600,16688,16685,100110.0,100000,1.001,0.9652,0.0346,0.0,0.000839,0.0,11.34,16.23,172,178,138

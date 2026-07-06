@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.DS_Store
+simulation/results/*.png
+simulation/results/*.csv
+!simulation/results/.gitkeep
+.pytest_cache/
+docs/_video_frames/
+dist/s3_bundle/
+*.log
