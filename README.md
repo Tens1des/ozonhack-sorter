@@ -101,25 +101,17 @@ python control/wms_server.py
 curl http://localhost:8080/route/OZ123456789
 ```
 
-## Сдача (3 шага)
-
-1. Загрузить `dist/ozonhack_s3_bundle.zip` на S3 → вписать URL ниже  
-2. Заполнить [docs/team.md](docs/team.md) → скопировать в раздел «Команда»  
-3. `git push` на GitHub
-
-### S3 (замените URL после загрузки)
-
 | Артефакт | Локально | S3 URL |
 |----------|----------|--------|
-| Полный архив | `dist/ozonhack_s3_bundle.zip` | `https://S3_URL/ozonhack_s3_bundle.zip` |
-| Видео | `docs/demo.mp4` | `https://S3_URL/demo.mp4` |
-| 3D-модели | `cad/models/` | `https://S3_URL/models/` |
+| Полный архив | `dist/ozonhack_s3_bundle.zip` | 
+| Видео | `docs/demo.mp4` |
+| 3D-модели | `cad/models/` |
 
-Инструкция: [docs/s3_upload.md](docs/s3_upload.md)
+
 
 ## Команда
 
-> Заполните [docs/team.md](docs/team.md) перед сдачей.
+
 
 ## Лицензия
 
