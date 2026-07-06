@@ -47,7 +47,12 @@ class SorterController:
       overflow=destination != decision.destination,
     )
 
+  def induction_complete(self, module_id: int) -> None:
+    """Товар прошёл индукцию и вышел на контур модуля."""
+    self.balancer.on_induction_end(module_id)
+
   def complete_item(self, destination: int) -> None:
     module_id = self.routing.module_for_destination(destination)
+    self.balancer.on_induction_end(module_id)
     self.routing.on_item_discharged(destination)
     self.balancer.on_item_complete(module_id)

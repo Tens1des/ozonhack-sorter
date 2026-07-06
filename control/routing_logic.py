@@ -37,7 +37,12 @@ class RoutingLogic:
     def module_for_destination(self, destination: int) -> int:
         return (destination - 1) // self.chutes_per_module + 1
 
+    def is_valid_destination(self, destination: int) -> bool:
+        return 1 <= destination <= self.num_destinations
+
     def can_accept(self, destination: int) -> bool:
+        if not self.is_valid_destination(destination):
+            return False
         chute = self.chutes[destination]
         if chute.state == NodeState.FAILED:
             return False
@@ -48,23 +53,24 @@ class RoutingLogic:
         return True
 
     def select_destination(self, preferred: int) -> int | None:
-        if self.can_accept(preferred):
+        if self.is_valid_destination(preferred) and self.can_accept(preferred):
             return preferred
 
-        module = self.module_for_destination(preferred)
-        module_range = range(
-            (module - 1) * self.chutes_per_module + 1,
-            module * self.chutes_per_module + 1,
-        )
+        if self.is_valid_destination(preferred):
+            module = self.module_for_destination(preferred)
+            module_range = range(
+                (module - 1) * self.chutes_per_module + 1,
+                module * self.chutes_per_module + 1,
+            )
 
-        candidates = [
-            chute_id
-            for chute_id in module_range
-            if self.can_accept(chute_id)
-            and self.chutes[chute_id].queue_depth < self.jam_threshold_queue
-        ]
-        if candidates:
-            return min(candidates, key=lambda c: self.chutes[c].queue_depth)
+            candidates = [
+                chute_id
+                for chute_id in module_range
+                if self.can_accept(chute_id)
+                and self.chutes[chute_id].queue_depth < self.jam_threshold_queue
+            ]
+            if candidates:
+                return min(candidates, key=lambda c: self.chutes[c].queue_depth)
 
         overflow = [
             chute_id

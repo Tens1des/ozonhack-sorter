@@ -33,3 +33,11 @@ def test_failed_chute():
     assert routing.can_accept(10) is False
     dest = routing.select_destination(10)
     assert dest != 10
+
+
+def test_wms_url_barcode_extraction():
+    from control.wms_server import extract_barcode
+
+    assert extract_barcode("/route/OZ123") == "OZ123"
+    assert extract_barcode("/route/OZ123?foo=bar") == "OZ123"
+    assert extract_barcode("/route/OZ%20123") == "OZ 123"

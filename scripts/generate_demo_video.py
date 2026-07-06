@@ -23,7 +23,7 @@ CSV = ROOT / "simulation" / "results" / "scenario_summary.csv"
 
 def ensure_data() -> pd.DataFrame:
   if not CSV.exists():
-    df = run_all_scenarios(duration_s=120, seed=42)
+    df, _ = run_all_scenarios(duration_s=120, seed=42)
     CSV.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(CSV, index=False)
     return df
@@ -90,7 +90,15 @@ def encode_video() -> None:
     "-pix_fmt", "yuv420p",
     str(OUT),
   ]
-  subprocess.run(cmd, check=True, capture_output=True)
+  try:
+    subprocess.run(cmd, check=True, capture_output=True)
+  except FileNotFoundError:
+    raise SystemExit(
+      "ffmpeg не найден. Установите ffmpeg и повторите: brew install ffmpeg"
+    ) from None
+  except subprocess.CalledProcessError as exc:
+    stderr = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else ""
+    raise SystemExit(f"ffmpeg завершился с ошибкой:\n{stderr}") from exc
 
 
 def main() -> None:

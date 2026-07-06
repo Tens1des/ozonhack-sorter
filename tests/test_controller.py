@@ -24,7 +24,20 @@ def test_sorter_controller():
   cmd = ctrl.process_barcode("OZ111222333")
   assert cmd is not None
   assert 1 <= cmd.destination <= 400
+  module = ctrl.balancer.modules[cmd.module_id]
+  assert module.induction_queue == 1
   ctrl.complete_item(cmd.destination)
+  assert module.induction_queue == 0
+  assert module.active_items == 0
+
+
+def test_routing_invalid_destination():
+  from control.routing_logic import RoutingLogic
+
+  routing = RoutingLogic(400, chute_buffer_capacity=12, jam_threshold_queue=8)
+  dest = routing.select_destination(999)
+  assert dest is not None
+  assert 1 <= dest <= 400
 
 
 def test_item_dimensions_in_limits():

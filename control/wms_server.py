@@ -5,10 +5,25 @@ from __future__ import annotations
 import argparse
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import unquote, urlparse
 
 from control.wms_mock import WmsMock
+from simulation.config import CONFIG
 
-WMS = WmsMock(400, seed=42)
+WMS = WmsMock(
+  CONFIG.num_destinations,
+  seed=42,
+  chutes_per_module=CONFIG.chutes_per_module,
+)
+
+
+def extract_barcode(path: str) -> str | None:
+  """Извлекает штрихкод из /route/<barcode>, без query string."""
+  parsed = urlparse(path)
+  if not parsed.path.startswith("/route/"):
+    return None
+  barcode = unquote(parsed.path.split("/route/", 1)[1].strip("/"))
+  return barcode or None
 
 
 class WmsHandler(BaseHTTPRequestHandler):
@@ -21,14 +36,12 @@ class WmsHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self) -> None:
-        if self.path in ("/", "/health"):
+        parsed = urlparse(self.path)
+        if parsed.path in ("/", "/health"):
             self._send_json(200, {"status": "ok", "service": "wms-mock"})
             return
-        if self.path.startswith("/route/"):
-            barcode = self.path.split("/route/", 1)[1]
-            if not barcode:
-                self._send_json(400, {"error": "barcode required"})
-                return
+        barcode = extract_barcode(self.path)
+        if barcode is not None:
             decision = WMS.resolve(barcode)
             self._send_json(
                 200,

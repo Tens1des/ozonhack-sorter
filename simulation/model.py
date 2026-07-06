@@ -55,7 +55,11 @@ class CrossBeltSorterSimulation:
         self.seed = seed
         self.rng = random.Random(seed)
         self.env = simpy.Environment()
-        self.wms = WmsMock(config.num_destinations, seed=seed)
+        self.wms = WmsMock(
+            config.num_destinations,
+            seed=seed,
+            chutes_per_module=config.chutes_per_module,
+        )
         self.routing = RoutingLogic(
             num_destinations=config.num_destinations,
             chute_buffer_capacity=config.chute_buffer_capacity,
@@ -97,6 +101,11 @@ class CrossBeltSorterSimulation:
 
         self._processed_in_window = 0
         self._window_start = 0.0
+        self._prev_congested: set[int] = set()
+
+    def _sync_kty_fill(self, chute_id: int) -> None:
+        ratio = self.kty_fill[chute_id] / self.kty_capacity[chute_id]
+        self.routing.update_kty_fill(chute_id, ratio)
 
     def _module_index(self, destination: int) -> int:
         return (destination - 1) // self.config.chutes_per_module
@@ -121,6 +130,7 @@ class CrossBeltSorterSimulation:
                 if fill_ratio >= 0.88 and self.rng.random() < 0.15:
                     yield self.env.timeout(0.4)
                     self.kty_fill[chute_id] *= self.config.kty_compaction_ratio
+                    self._sync_kty_fill(chute_id)
                     self.metrics.kty_stats.compaction_events += 1
                     continue
 
@@ -153,12 +163,6 @@ class CrossBeltSorterSimulation:
                 self.metrics.item_stats.lost += 1
                 return
 
-            misrouted = destination != preferred
-            if misrouted:
-                self.metrics.item_stats.misrouted += 1
-            else:
-                self.metrics.item_stats.sorted_correctly += 1
-
             module_idx = self._module_index(destination)
             module_id = module_idx + 1
             self.routing.on_item_routed(destination)
@@ -179,9 +183,16 @@ class CrossBeltSorterSimulation:
                 self.balancer.on_item_complete(module_id)
                 return
 
+            misrouted = destination != preferred
+            if misrouted:
+                self.metrics.item_stats.misrouted += 1
+            else:
+                self.metrics.item_stats.sorted_correctly += 1
+
             dims = item_dims or generate_item(self.rng)
             slots = kty_slots_for_item(dims, self.kty_capacity[destination])
             self.kty_fill[destination] += slots
+            self._sync_kty_fill(destination)
             self.routing.on_item_discharged(destination)
             self.balancer.on_item_complete(module_id)
 
@@ -214,11 +225,12 @@ class CrossBeltSorterSimulation:
     def monitor(self, interval_s: float = 30.0) -> simpy.events.Process:
         def process() -> simpy.events.Generator:
             while True:
-                congested = self.routing.congested_chutes()
+                congested = set(self.routing.congested_chutes())
                 total_queue = sum(c.queue_depth for c in self.routing.chutes.values())
                 self.metrics.queue_samples.append((self.env.now, total_queue))
-                if congested:
-                    self.metrics.jam_events += len(congested)
+                new_jams = congested - self._prev_congested
+                self.metrics.jam_events += len(new_jams)
+                self._prev_congested = congested
                 yield self.env.timeout(interval_s)
 
         return self.env.process(process())

@@ -12,6 +12,7 @@ COPY docs/ docs/
 COPY cad/ cad/
 COPY tests/ tests/
 COPY Makefile .
+COPY README.md .
 
 ENV PYTHONPATH=/app
 

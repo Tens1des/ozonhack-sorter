@@ -33,14 +33,13 @@ def main() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     if args.scenario == "all":
-        df = run_all_scenarios(duration_s=args.duration, seed=args.seed)
+        df, results = run_all_scenarios(duration_s=args.duration, seed=args.seed)
         csv_path = RESULTS_DIR / "scenario_summary.csv"
         df.to_csv(csv_path, index=False)
         plot_scenario_summary(df)
 
         details = {}
-        for name, runner in SCENARIOS.items():
-            result = runner(duration_s=args.duration, seed=args.seed)
+        for name, result in results.items():
             plot_queue_timeline(result)
             details[name] = result.summary()
 

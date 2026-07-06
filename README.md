@@ -103,15 +103,17 @@ curl http://localhost:8080/route/OZ123456789
 
 | Артефакт | Локально | S3 URL |
 |----------|----------|--------|
-| Полный архив | `dist/ozonhack_s3_bundle.zip` | 
-| Видео | `docs/demo.mp4` |
-| 3D-модели | `cad/models/` |
-
-
+| Полный архив | `dist/ozonhack_s3_bundle.zip` | `https://s3.../ozonhack_s3_bundle.zip` |
+| Видео | `docs/demo.mp4` | `https://s3.../demo.mp4` |
+| 3D-модели | `cad/models/` | `https://s3.../models/` |
 
 ## Команда
 
+| Участник | Роль | Вклад |
+|----------|------|-------|
+| Котов Роман | Тимлид / концепция | Архитектура, отчёт |
 
+Подробнее: [docs/team.md](docs/team.md)
 
 ## Лицензия
 

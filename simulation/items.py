@@ -57,5 +57,7 @@ def generate_item(rng: random.Random) -> ItemDimensions:
 def kty_slots_for_item(item: ItemDimensions, base_capacity: int) -> float:
     """Доля ёмкости КТЯ, занимаемая товаром (калибровано под ~99% точности)."""
     ref_volume = 200.0 * 100.0 * 60.0
+    ref_capacity = 28
     ratio = item.volume_mm3 / ref_volume
-    return max(0.35, min(1.0, ratio**0.55))
+    slot = max(0.35, min(1.0, ratio**0.55))
+    return slot * (ref_capacity / max(base_capacity, 1))

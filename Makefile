@@ -1,33 +1,39 @@
-.PHONY: install calc simulate diagrams stl video verify all test wms docker
+.PHONY: install calc simulate diagrams stl video verify all test wms docker package
+
+ifeq ($(wildcard .venv/bin/python),)
+PY := python3
+else
+PY := .venv/bin/python
+endif
 
 install:
 	python3 -m venv .venv
 	.venv/bin/pip install -r requirements.txt
 
 calc:
-	PYTHONPATH=. .venv/bin/python scripts/calculations.py
+	PYTHONPATH=. $(PY) scripts/calculations.py
 
 diagrams:
-	PYTHONPATH=. .venv/bin/python scripts/generate_layout.py
-	PYTHONPATH=. .venv/bin/python scripts/generate_diagrams.py
+	PYTHONPATH=. $(PY) scripts/generate_layout.py
+	PYTHONPATH=. $(PY) scripts/generate_diagrams.py
 
 stl:
-	PYTHONPATH=. .venv/bin/python scripts/generate_stl.py
+	PYTHONPATH=. $(PY) scripts/generate_stl.py
 
 simulate:
-	PYTHONPATH=. .venv/bin/python simulation/run.py --scenario all --duration 600
+	PYTHONPATH=. $(PY) simulation/run.py --scenario all --duration 600
 
 video:
-	PYTHONPATH=. .venv/bin/python scripts/generate_demo_video.py
+	PYTHONPATH=. $(PY) scripts/generate_demo_video.py
 
 verify:
-	PYTHONPATH=. .venv/bin/python scripts/verify_submission.py
+	PYTHONPATH=. $(PY) scripts/verify_submission.py
 
 test:
-	PYTHONPATH=. .venv/bin/python -m pytest tests/ -q
+	PYTHONPATH=. $(PY) -m pytest tests/ -q
 
 wms:
-	PYTHONPATH=. .venv/bin/python control/wms_server.py
+	PYTHONPATH=. $(PY) control/wms_server.py
 
 all:
 	./scripts/run_all.sh

@@ -17,10 +17,18 @@ class RoutingDecision:
 class WmsMock:
     """Возвращает ячейку назначения по штрихкоду."""
 
-    def __init__(self, num_destinations: int = 400, seed: int = 42) -> None:
+    def __init__(
+        self,
+        num_destinations: int = 400,
+        seed: int = 42,
+        chutes_per_module: int = 100,
+    ) -> None:
         if num_destinations < 1:
             raise ValueError("num_destinations must be positive")
+        if chutes_per_module < 1:
+            raise ValueError("chutes_per_module must be positive")
         self.num_destinations = num_destinations
+        self.chutes_per_module = chutes_per_module
         self._rng = random.Random(seed)
 
     def _stable_destination(self, barcode: str) -> int:
@@ -29,8 +37,8 @@ class WmsMock:
 
     def resolve(self, barcode: str) -> RoutingDecision:
         destination = self._stable_destination(barcode)
-        module = (destination - 1) // 100 + 1
-        chute = (destination - 1) % 100 + 1
+        module = (destination - 1) // self.chutes_per_module + 1
+        chute = (destination - 1) % self.chutes_per_module + 1
         return RoutingDecision(
             barcode=barcode,
             destination=destination,

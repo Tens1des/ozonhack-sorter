@@ -86,7 +86,7 @@ def run_hotspot_jam(duration_s: float = 3600, seed: int = 7) -> ScenarioResult:
     def biased_resolve(barcode: str) -> RoutingDecision:
         decision = original_resolve(barcode)
         if sim.rng.random() < 0.55:
-            destination = sim.rng.randint(1, 100)
+            destination = sim.rng.randint(1, CONFIG.chutes_per_module)
             return RoutingDecision(
                 barcode=barcode,
                 destination=destination,
@@ -108,9 +108,13 @@ SCENARIOS = {
 }
 
 
-def run_all_scenarios(duration_s: float = 3600, seed: int = 42) -> pd.DataFrame:
+def run_all_scenarios(
+    duration_s: float = 3600, seed: int = 42
+) -> tuple[pd.DataFrame, dict[str, ScenarioResult]]:
+    results: dict[str, ScenarioResult] = {}
     rows = []
     for name, runner in SCENARIOS.items():
         result = runner(duration_s=duration_s, seed=seed)
+        results[name] = result
         rows.append(result.summary())
-    return pd.DataFrame(rows)
+    return pd.DataFrame(rows), results
